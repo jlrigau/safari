@@ -1,41 +1,45 @@
 /* =====================================================================
    Mon Safari à Thoiry — application pour les enfants de maternelle
    Liste des animaux reprise du panneau « Les habitants du safari ».
+
+   Les vraies photos sont chargées depuis Wikipédia (côté navigateur) à
+   partir du nom scientifique latin de chaque animal. L'emoji sert de
+   repli tant que la photo n'est pas chargée (ou si elle est introuvable).
    ===================================================================== */
 
 const ANIMALS = [
   // ---------- EN AFRIQUE ----------
-  { region: "afrique", emoji: "🐘", name: "Éléphant de savane" },
-  { region: "afrique", emoji: "🦏", name: "Rhinocéros blanc" },
-  { region: "afrique", emoji: "🦛", name: "Hippopotame" },
-  { region: "afrique", emoji: "🦃", name: "Autruche d'Afrique" },
-  { region: "afrique", emoji: "🦒", name: "Girafe du Kordofan" },
-  { region: "afrique", emoji: "🦌", name: "Éland du Cap" },
-  { region: "afrique", emoji: "🦌", name: "Grand koudou" },
-  { region: "afrique", emoji: "🐐", name: "Hippotrague noir" },
-  { region: "afrique", emoji: "🐄", name: "Vache watusi" },
-  { region: "afrique", emoji: "🦓", name: "Zèbre de Chapman" },
-  { region: "afrique", emoji: "🦌", name: "Cobe à croissant" },
-  { region: "afrique", emoji: "🐏", name: "Oryx algazelle" },
-  { region: "afrique", emoji: "🐃", name: "Gnou à queue blanche" },
-  { region: "afrique", emoji: "🐃", name: "Gnou bleu" },
-  { region: "afrique", emoji: "🦌", name: "Cobe lechwe" },
-  { region: "afrique", emoji: "🐦", name: "Grue royale" },
-  { region: "afrique", emoji: "🦌", name: "Sitatunga du Gabon" },
-  { region: "afrique", emoji: "🦌", name: "Springbok" },
-  { region: "afrique", emoji: "🐗", name: "Phacochère commun" },
+  { region: "afrique", emoji: "🐘", name: "Éléphant de savane", wiki: ["Loxodonta africana"] },
+  { region: "afrique", emoji: "🦏", name: "Rhinocéros blanc", wiki: ["Ceratotherium simum", "Rhinocéros blanc"] },
+  { region: "afrique", emoji: "🦛", name: "Hippopotame", wiki: ["Hippopotamus amphibius", "Hippopotame amphibie"] },
+  { region: "afrique", emoji: "🦃", name: "Autruche d'Afrique", wiki: ["Struthio camelus", "Autruche d'Afrique"] },
+  { region: "afrique", emoji: "🦒", name: "Girafe du Kordofan", wiki: ["Giraffa camelopardalis antiquorum", "Girafe du Kordofan", "Giraffa camelopardalis"] },
+  { region: "afrique", emoji: "🦌", name: "Éland du Cap", wiki: ["Taurotragus oryx", "Éland du Cap"] },
+  { region: "afrique", emoji: "🦌", name: "Grand koudou", wiki: ["Tragelaphus strepsiceros", "Grand koudou"] },
+  { region: "afrique", emoji: "🐐", name: "Hippotrague noir", wiki: ["Hippotragus niger", "Hippotrague noir"] },
+  { region: "afrique", emoji: "🐄", name: "Vache watusi", wiki: ["Ankole-Watusi", "Watusi (race bovine)", "Watusi"] },
+  { region: "afrique", emoji: "🦓", name: "Zèbre de Chapman", wiki: ["Equus quagga chapmani", "Zèbre de Chapman", "Equus quagga"] },
+  { region: "afrique", emoji: "🦌", name: "Cobe à croissant", wiki: ["Kobus ellipsiprymnus", "Cobe à croissant"] },
+  { region: "afrique", emoji: "🐏", name: "Oryx algazelle", wiki: ["Oryx dammah", "Oryx algazelle"] },
+  { region: "afrique", emoji: "🐃", name: "Gnou à queue blanche", wiki: ["Connochaetes gnou", "Gnou noir", "Gnou à queue blanche"] },
+  { region: "afrique", emoji: "🐃", name: "Gnou bleu", wiki: ["Connochaetes taurinus", "Gnou bleu"] },
+  { region: "afrique", emoji: "🦌", name: "Cobe lechwe", wiki: ["Kobus leche", "Cobe lechwe", "Lechwe"] },
+  { region: "afrique", emoji: "🐦", name: "Grue royale", wiki: ["Balearica regulorum", "Grue royale"] },
+  { region: "afrique", emoji: "🦌", name: "Sitatunga du Gabon", wiki: ["Tragelaphus spekii", "Sitatunga", "Sitatunga du Gabon"] },
+  { region: "afrique", emoji: "🦌", name: "Springbok", wiki: ["Antidorcas marsupialis", "Springbok"] },
+  { region: "afrique", emoji: "🐗", name: "Phacochère commun", wiki: ["Phacochoerus africanus", "Phacochère commun"] },
 
   // ---------- EN AMÉRIQUE ----------
-  { region: "amerique", emoji: "🦬", name: "Bison d'Amérique" },
-  { region: "amerique", emoji: "🐻", name: "Ours noir d'Amérique" },
-  { region: "amerique", emoji: "🐻", name: "Ours à lunettes" },
-  { region: "amerique", emoji: "🐺", name: "Loup du Canada" },
-  { region: "amerique", emoji: "🐺", name: "Coyote" },
+  { region: "amerique", emoji: "🦬", name: "Bison d'Amérique", wiki: ["Bison bison", "Bison d'Amérique"] },
+  { region: "amerique", emoji: "🐻", name: "Ours noir d'Amérique", wiki: ["Ursus americanus", "Ours noir"] },
+  { region: "amerique", emoji: "🐻", name: "Ours à lunettes", wiki: ["Tremarctos ornatus", "Ours à lunettes"] },
+  { region: "amerique", emoji: "🐺", name: "Loup du Canada", wiki: ["Canis lupus occidentalis", "Loup du Canada", "Canis lupus"] },
+  { region: "amerique", emoji: "🐺", name: "Coyote", wiki: ["Canis latrans", "Coyote"] },
 
   // ---------- EN EURASIE ----------
-  { region: "eurasie", emoji: "🦬", name: "Bison d'Europe" },
-  { region: "eurasie", emoji: "🐎", name: "Cheval de Przewalski" },
-  { region: "eurasie", emoji: "🦌", name: "Daim d'Europe" },
+  { region: "eurasie", emoji: "🦬", name: "Bison d'Europe", wiki: ["Bison bonasus", "Bison d'Europe"] },
+  { region: "eurasie", emoji: "🐎", name: "Cheval de Przewalski", wiki: ["Equus ferus przewalskii", "Cheval de Przewalski", "Equus przewalskii"] },
+  { region: "eurasie", emoji: "🦌", name: "Daim d'Europe", wiki: ["Dama dama", "Daim européen", "Daim"] },
 ];
 
 const REGIONS = [
@@ -45,6 +49,9 @@ const REGIONS = [
 ];
 
 const STORAGE_KEY = "safari-thoiry-vus";
+
+/* Cache des URLs de photos déjà résolues (mémoire + navigateur) */
+const photoCache = {};
 
 /* État : ensemble des index d'animaux vus, sauvegardé dans le navigateur */
 let seen = loadSeen();
@@ -68,6 +75,72 @@ if ("speechSynthesis" in window) {
   window.speechSynthesis.getVoices();
   window.speechSynthesis.onvoiceschanged = () =>
     window.speechSynthesis.getVoices();
+}
+
+/* ---------- Chargement des vraies photos depuis Wikipédia ---------- */
+
+// Interroge une Wikipédia (fr/en) pour l'image principale d'un article
+async function fetchThumb(lang, title, size) {
+  const url =
+    "https://" + lang + ".wikipedia.org/w/api.php" +
+    "?action=query&format=json&prop=pageimages&piprop=thumbnail" +
+    "&pithumbsize=" + size + "&redirects=1&origin=*&titles=" +
+    encodeURIComponent(title);
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const pages = data.query && data.query.pages;
+  if (!pages) return null;
+  for (const k in pages) {
+    const t = pages[k].thumbnail;
+    if (t && t.source) return t.source;
+  }
+  return null;
+}
+
+// Résout l'URL de la photo d'un animal (essaie plusieurs noms, fr puis en)
+async function resolvePhoto(animal) {
+  const key = "photo:" + animal.name;
+  if (photoCache[animal.name]) return photoCache[animal.name];
+
+  const stored = localStorage.getItem(key);
+  if (stored) {
+    photoCache[animal.name] = stored;
+    return stored;
+  }
+
+  const candidates = animal.wiki && animal.wiki.length ? animal.wiki : [animal.name];
+  for (const lang of ["fr", "en"]) {
+    for (const title of candidates) {
+      try {
+        const src = await fetchThumb(lang, title, 480);
+        if (src) {
+          photoCache[animal.name] = src;
+          try { localStorage.setItem(key, src); } catch (e) {}
+          return src;
+        }
+      } catch (e) {
+        /* réseau indisponible : on garde l'emoji */
+      }
+    }
+  }
+  return null; // aucune photo trouvée → emoji conservé
+}
+
+// Charge les photos de toutes les cartes affichées
+function loadPhotos() {
+  document.querySelectorAll(".animal").forEach((card) => {
+    const index = Number(card.dataset.index);
+    const animal = ANIMALS[index];
+    const img = card.querySelector(".photo");
+    if (!img || card.classList.contains("has-photo")) return;
+
+    resolvePhoto(animal).then((src) => {
+      if (!src) return;
+      img.onload = () => card.classList.add("has-photo");
+      img.src = src;
+    });
+  });
 }
 
 /* ---------- Construction de l'interface ---------- */
@@ -99,7 +172,10 @@ function render() {
         animal.name + (seen.has(index) ? " (vu)" : "")
       );
       card.innerHTML =
-        '<span class="emoji">' + animal.emoji + "</span>" +
+        '<div class="thumb">' +
+          '<span class="emoji">' + animal.emoji + "</span>" +
+          '<img class="photo" alt="" loading="lazy" />' +
+        "</div>" +
         '<span class="name">' + animal.name + "</span>" +
         '<span class="check">✓</span>';
 
@@ -112,6 +188,7 @@ function render() {
   });
 
   updateScore();
+  loadPhotos();
 }
 
 /* ---------- Marquer / démarquer un animal ---------- */
@@ -159,8 +236,12 @@ function showSummary() {
   list.forEach((a) => {
     const item = document.createElement("div");
     item.className = "summary-item";
+    const photo = photoCache[a.name];
     item.innerHTML =
-      '<span class="emoji">' + a.emoji + "</span>" + a.name;
+      (photo
+        ? '<img class="photo" alt="" src="' + photo + '" />'
+        : '<span class="emoji">' + a.emoji + "</span>") +
+      a.name;
     container.appendChild(item);
   });
 
