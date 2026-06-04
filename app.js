@@ -143,8 +143,8 @@ function speak(text) {
   speakWith(text, 0.9, 1.1);
 }
 
-// Joue le « cri » (onomatopée) d'un animal, avec une tonalité rigolote
-function playCry(animal) {
+// Repli : « cri » parlé (onomatopée) avec une tonalité rigolote
+function playCrySpoken(animal) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   speakWith(animal.cri || (animal.name + " ne fait pas de bruit !"), 0.75, animal.pitch || 1.0);
@@ -251,6 +251,141 @@ function loadPhotos() {
   });
 }
 
+/* ---------- Vrais cris d'animaux (best-effort, depuis Wikimedia) ----------
+   On cherche un fichier son sur l'article Wikipédia, en évitant les fichiers
+   de prononciation du mot. On privilégie la version MP3 transcodée (lisible
+   sur iPhone). Si rien n'est jouable, on retombe sur le cri parlé.        */
+
+const cryCache = {};   // nom -> [urls] jouables, ou null si rien trouvé
+let currentAudio = null;
+
+function stopAudio() {
+  if (currentAudio) {
+    try { currentAudio.pause(); } catch (e) {}
+    currentAudio = null;
+  }
+}
+
+// Construit l'URL du MP3 transcodé Wikimedia à partir de l'URL d'origine
+function deriveTranscodedMp3(url) {
+  try {
+    const u = new URL(url);
+    if (u.host !== "upload.wikimedia.org") return null;
+    const parts = u.pathname.split("/"); // /wikipedia/commons/3/3f/Nom.oga
+    const file = parts[parts.length - 1];
+    if (!/\.(ogg|oga|flac|wav|opus)$/i.test(file)) return null;
+    const repoIdx = parts.indexOf("wikipedia");
+    if (repoIdx === -1 || !parts[repoIdx + 1]) return null;
+    parts.splice(repoIdx + 2, 0, "transcoded"); // insère après le nom du dépôt
+    return u.origin + parts.join("/") + "/" + file + ".mp3";
+  } catch (e) {
+    return null;
+  }
+}
+
+// Trouve un fichier audio « cri » sur un article (évite les prononciations)
+async function findAudioFile(lang, title) {
+  const url =
+    "https://" + lang + ".wikipedia.org/w/api.php" +
+    "?action=query&format=json&origin=*&redirects=1&prop=images&imlimit=200&titles=" +
+    encodeURIComponent(title);
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const pages = data.query && data.query.pages;
+  if (!pages) return null;
+
+  let files = [];
+  for (const k in pages) {
+    if (pages[k].images) files = files.concat(pages[k].images.map((i) => i.title));
+  }
+  const audio = files.filter((f) => /\.(ogg|oga|wav|flac|mp3|m4a|opus)$/i.test(f));
+  if (!audio.length) return null;
+
+  const isPron = (f) =>
+    /pronunciation|prononciation|\bLL-Q|(^|[ \-_/:])(en|fr|de|es|it|nl|pt)[\- ]/i.test(f);
+  const isSound = (f) =>
+    /(call|cry|sound|vocal|roar|trumpet|bray|growl|grunt|bellow|bugle|howl|song|noise|whinny|bark|roaring|grunting)/i.test(f);
+
+  return (
+    audio.find((f) => isSound(f) && !isPron(f)) ||
+    audio.find((f) => !isPron(f)) ||
+    null
+  );
+}
+
+// Résout l'URL réelle d'un fichier
+async function resolveFileUrl(lang, fileTitle) {
+  const url =
+    "https://" + lang + ".wikipedia.org/w/api.php" +
+    "?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&titles=" +
+    encodeURIComponent(fileTitle);
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const pages = data.query && data.query.pages;
+  if (!pages) return null;
+  for (const k in pages) {
+    const ii = pages[k].imageinfo;
+    if (ii && ii[0] && ii[0].url) return ii[0].url;
+  }
+  return null;
+}
+
+// Résout (et met en cache) la liste d'URLs jouables pour le cri d'un animal
+async function resolveCry(animal) {
+  if (animal.name in cryCache) return cryCache[animal.name];
+
+  const candidates = animal.wiki && animal.wiki.length ? animal.wiki : [animal.name];
+  for (const title of candidates) {
+    for (const lang of ["fr", "en"]) {
+      try {
+        const file = await findAudioFile(lang, title);
+        if (!file) continue;
+        const orig = await resolveFileUrl(lang, file);
+        if (!orig) continue;
+        const urls = [];
+        const mp3 = deriveTranscodedMp3(orig);
+        if (mp3) urls.push(mp3); // MP3 d'abord (iPhone)
+        urls.push(orig);
+        cryCache[animal.name] = urls;
+        return urls;
+      } catch (e) {
+        /* on continue */
+      }
+    }
+  }
+  cryCache[animal.name] = null;
+  return null;
+}
+
+// Essaie de jouer une liste d'URLs, sinon retombe sur le cri parlé
+function playUrlList(animal, urls, idx) {
+  if (idx >= urls.length) {
+    playCrySpoken(animal);
+    return;
+  }
+  stopAudio();
+  const a = new Audio();
+  currentAudio = a;
+  a.addEventListener("error", () => playUrlList(animal, urls, idx + 1), { once: true });
+  a.src = urls[idx];
+  const p = a.play();
+  if (p && p.catch) p.catch(() => playUrlList(animal, urls, idx + 1));
+}
+
+// Joue le cri : vrai son si disponible, sinon onomatopée
+function playCry(animal) {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  const urls = cryCache[animal.name];
+  if (urls && urls.length) {
+    playUrlList(animal, urls, 0);
+  } else {
+    playCrySpoken(animal);
+    if (!(animal.name in cryCache)) resolveCry(animal); // pour la prochaine fois
+  }
+}
+
 /* ---------- Construction de l'interface ---------- */
 function render() {
   const app = document.getElementById("app");
@@ -284,7 +419,7 @@ function render() {
           '<span class="emoji">' + animal.emoji + "</span>" +
           '<img class="photo" alt="" loading="lazy" />' +
           '<span class="info" role="button" aria-label="En savoir plus sur ' +
-            animal.name + '">ℹ️</span>' +
+            animal.name + '">i</span>' +
         "</div>" +
         '<span class="name">' + animal.name + "</span>" +
         '<span class="check">✓</span>';
@@ -389,6 +524,9 @@ function openDetail(animal) {
 
   document.getElementById("detail").classList.remove("hidden");
 
+  // Pré-charge le vrai cri en arrière-plan (prêt dès le clic sur « Le cri »)
+  resolveCry(animal);
+
   // Lit le nom puis la description à voix haute (pour les non-lecteurs)
   speakSequence([
     { text: animal.name, rate: 0.9, pitch: 1.1 },
@@ -398,6 +536,7 @@ function openDetail(animal) {
 
 function closeDetail() {
   document.getElementById("detail").classList.add("hidden");
+  stopAudio();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   currentDetail = null;
 }
