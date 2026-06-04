@@ -1,0 +1,46 @@
+name: Déploiement GitHub Pages
+
+# Déploie le site statique sur GitHub Pages à chaque push sur la branche de
+# développement (et sur main), ou manuellement depuis l'onglet Actions.
+on:
+  push:
+    branches:
+      - main
+      - claude/zoo-thoiry-animal-app-kfDib
+  workflow_dispatch:
+
+# Permissions nécessaires au déploiement sur Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Pages
+        uses: actions/configure-pages@v5
+        with:
+          # Active Pages automatiquement si ce n'est pas déjà fait
+          enablement: true
+
+      - name: Préparer l'artéfact (tout le dépôt)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Déployer sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
