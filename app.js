@@ -79,6 +79,18 @@ if ("speechSynthesis" in window) {
 
 /* ---------- Chargement des vraies photos depuis Wikipédia ---------- */
 
+// Écarte les images qui ne sont pas des photos (cartes de répartition,
+// schémas, logos…) : elles contiennent des mots-clés reconnaissables ou
+// sont des fichiers vectoriels .svg (souvent des cartes).
+function isLikelyPhoto(url) {
+  const u = url.toLowerCase();
+  if (/\.svg(\/|\.|$|\?)/.test(u)) return false;
+  if (/(range|distribution|\bmap\b|carte|localisation|locator|aire|repartition|r%c3%a9partition|iucn|status|world|\.ogg|\.oga)/.test(u)) {
+    return false;
+  }
+  return true;
+}
+
 // Source 1 : API « pageimages » (image principale d'un article)
 async function fetchThumbPageImages(lang, title, size) {
   const url =
@@ -93,7 +105,7 @@ async function fetchThumbPageImages(lang, title, size) {
   if (!pages) return null;
   for (const k in pages) {
     const t = pages[k].thumbnail;
-    if (t && t.source) return t.source;
+    if (t && t.source && isLikelyPhoto(t.source)) return t.source;
   }
   return null;
 }
@@ -106,14 +118,16 @@ async function fetchThumbSummary(lang, title) {
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = await res.json();
-  if (data.thumbnail && data.thumbnail.source) return data.thumbnail.source;
-  if (data.originalimage && data.originalimage.source) return data.originalimage.source;
+  if (data.thumbnail && data.thumbnail.source && isLikelyPhoto(data.thumbnail.source))
+    return data.thumbnail.source;
+  if (data.originalimage && data.originalimage.source && isLikelyPhoto(data.originalimage.source))
+    return data.originalimage.source;
   return null;
 }
 
 // Résout l'URL de la photo d'un animal en essayant plusieurs noms et sources
 async function resolvePhoto(animal) {
-  const key = "photo:" + animal.name;
+  const key = "photo2:" + animal.name;
   if (photoCache[animal.name]) return photoCache[animal.name];
 
   const stored = localStorage.getItem(key);
