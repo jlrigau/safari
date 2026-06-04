@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#5b8c5a" />
+  <title>Mon Safari à Thoiry 🦁</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>🦁 Mon Safari à Thoiry</h1>
+    <p class="subtitle">Touche les animaux que tu as vus !</p>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="app-footer">
+    <div class="score" id="score" aria-live="polite">
+      <span class="score-count" id="score-count">0</span>
+      <span class="score-label" id="score-label">animal vu</span>
+    </div>
+    <button id="say-all" class="btn btn-say">🔊 Dire mes animaux</button>
+    <button id="reset" class="btn btn-reset">🔄 Recommencer</button>
+  </footer>
+
+  <!-- Fenêtre de récapitulatif -->
+  <div id="summary" class="summary hidden" role="dialog" aria-modal="true">
+    <div class="summary-card">
+      <button class="summary-close" id="summary-close" aria-label="Fermer">✕</button>
+      <h2 id="summary-title">🎉 Bravo !</h2>
+      <p id="summary-text"></p>
+      <div class="summary-list" id="summary-list"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
