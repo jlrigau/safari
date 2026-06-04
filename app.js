@@ -79,8 +79,8 @@ if ("speechSynthesis" in window) {
 
 /* ---------- Chargement des vraies photos depuis Wikipédia ---------- */
 
-// Interroge une Wikipédia (fr/en) pour l'image principale d'un article
-async function fetchThumb(lang, title, size) {
+// Source 1 : API « pageimages » (image principale d'un article)
+async function fetchThumbPageImages(lang, title, size) {
   const url =
     "https://" + lang + ".wikipedia.org/w/api.php" +
     "?action=query&format=json&prop=pageimages&piprop=thumbnail" +
@@ -98,7 +98,20 @@ async function fetchThumb(lang, title, size) {
   return null;
 }
 
-// Résout l'URL de la photo d'un animal (essaie plusieurs noms, fr puis en)
+// Source 2 : API REST « summary » (vignette de la fiche)
+async function fetchThumbSummary(lang, title) {
+  const url =
+    "https://" + lang + ".wikipedia.org/api/rest_v1/page/summary/" +
+    encodeURIComponent(title.replace(/ /g, "_"));
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (data.thumbnail && data.thumbnail.source) return data.thumbnail.source;
+  if (data.originalimage && data.originalimage.source) return data.originalimage.source;
+  return null;
+}
+
+// Résout l'URL de la photo d'un animal en essayant plusieurs noms et sources
 async function resolvePhoto(animal) {
   const key = "photo:" + animal.name;
   if (photoCache[animal.name]) return photoCache[animal.name];
@@ -110,17 +123,19 @@ async function resolvePhoto(animal) {
   }
 
   const candidates = animal.wiki && animal.wiki.length ? animal.wiki : [animal.name];
-  for (const lang of ["fr", "en"]) {
-    for (const title of candidates) {
+  for (const title of candidates) {
+    for (const lang of ["fr", "en"]) {
       try {
-        const src = await fetchThumb(lang, title, 480);
+        const src =
+          (await fetchThumbPageImages(lang, title, 500)) ||
+          (await fetchThumbSummary(lang, title));
         if (src) {
           photoCache[animal.name] = src;
           try { localStorage.setItem(key, src); } catch (e) {}
           return src;
         }
       } catch (e) {
-        /* réseau indisponible : on garde l'emoji */
+        /* réseau/CORS indisponible : on garde l'emoji */
       }
     }
   }
