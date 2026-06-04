@@ -35,12 +35,16 @@ python3 -m http.server 8000
 
 ## 🛠️ Déploiement (GitHub Pages)
 
-Le déploiement est **automatique** via GitHub Actions
-(`.github/workflows/deploy.yml`) à chaque push sur la branche de développement
-ou sur `main`.
+Le site est un site **statique** publié directement depuis la branche `main`.
 
-> ℹ️ Lors du tout premier déploiement, vérifiez dans
-> **Settings → Pages** que la source est bien réglée sur **GitHub Actions**.
+Réglage (une seule fois) dans **Settings → Pages** :
+
+- **Source** : *Deploy from a branch*
+- **Branch** : `main` — dossier `/ (root)`
+
+Chaque push sur `main` met ensuite le site à jour automatiquement.
+Le fichier `.nojekyll` indique à GitHub de servir les fichiers tels quels
+(sans traitement Jekyll).
 
 ## 📂 Structure
 
