@@ -132,6 +132,25 @@ main {
 .animal.has-photo .photo { opacity: 1; }
 .animal.has-photo .emoji { display: none; }
 
+/* Bouton ℹ️ en savoir plus (coin haut-gauche de la photo) */
+.animal .info {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 2;
+}
+.animal .info:active { transform: scale(0.9); }
+
 .animal .name {
   display: block;
   margin-top: 0.35rem;
@@ -308,3 +327,40 @@ main {
   font-size: 1.05rem;
   color: #777;
 }
+
+/* ---------- Fiche détaillée d'un animal ---------- */
+.detail-card { text-align: center; }
+
+.detail-thumb {
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  margin: 0.25rem auto 0.75rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #f3ecdb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.detail-thumb .photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.detail-thumb .emoji { font-size: 5rem; }
+
+#detail-name { margin: 0 0 0.5rem; font-size: 1.5rem; }
+
+.detail-desc {
+  font-size: 1.15rem;
+  line-height: 1.4;
+  margin: 0 0 1rem;
+}
+
+.detail-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-read { background: #c0653f; }

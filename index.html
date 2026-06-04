@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#5b8c5a" />
   <title>Mon Safari à Thoiry 🦁</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
   <header class="app-header">
@@ -24,6 +24,20 @@
     <button id="reset" class="btn btn-reset">🔄 Recommencer</button>
   </footer>
 
+  <!-- Fiche détaillée d'un animal -->
+  <div id="detail" class="summary hidden" role="dialog" aria-modal="true">
+    <div class="summary-card detail-card">
+      <button class="summary-close" id="detail-close" aria-label="Fermer">✕</button>
+      <div id="detail-thumb" class="detail-thumb"></div>
+      <h2 id="detail-name"></h2>
+      <p id="detail-desc" class="detail-desc"></p>
+      <div class="detail-buttons">
+        <button id="detail-cry" class="btn btn-say">🔊 Le cri</button>
+        <button id="detail-read" class="btn btn-read">🗣️ La description</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Fenêtre de récapitulatif -->
   <div id="summary" class="summary hidden" role="dialog" aria-modal="true">
     <div class="summary-card">
@@ -34,6 +48,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
